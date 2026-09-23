@@ -38,3 +38,28 @@ def test_register_duplicate_email_fails(client):
         "/auth/register", json={"email": email, "password": "anotherpass123"}
     )
     assert duplicate_response.status_code == 400
+
+
+def test_token_with_no_subject_fails(client):
+    from jose import jwt
+    from app.config import settings
+
+    bad_token = jwt.encode({}, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
+    response = client.get(
+        "/accounts", headers={"Authorization": f"Bearer {bad_token}"}
+    )
+    assert response.status_code == 401
+
+
+def test_token_for_nonexistent_user_fails(client):
+    from jose import jwt
+    from app.config import settings
+
+    fake_user_id = "00000000-0000-0000-0000-000000000000"
+    token = jwt.encode(
+        {"sub": fake_user_id}, settings.jwt_secret_key, algorithm=settings.jwt_algorithm
+    )
+    response = client.get(
+        "/accounts", headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 401

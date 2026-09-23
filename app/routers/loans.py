@@ -30,7 +30,7 @@ def disburse_loan(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     loan = db.query(Loan).filter(Loan.id == loan_id).first()
     if not loan:
@@ -45,7 +45,7 @@ def disburse_loan(
 
     account.balance += loan.principal_amount
     loan.disbursed = True
-    loan.disbursed_at = datetime.utcnow()
+    loan.disbursed_at = datetime.now(timezone.utc)
 
     db.add(
         Transaction(

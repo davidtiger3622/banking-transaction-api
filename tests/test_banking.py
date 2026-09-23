@@ -117,3 +117,122 @@ def test_loan_creation_and_disbursement(client):
     account_check = client.get("/accounts", headers=headers)
     updated_account = next(a for a in account_check.json() if a["id"] == account["id"])
     assert float(updated_account["balance"]) == 10000
+
+
+def test_get_current_user_with_invalid_token_fails(client):
+    response = client.get(
+        "/accounts", headers={"Authorization": "Bearer invalid.token.here"}
+    )
+    assert response.status_code == 401
+
+
+def test_access_without_token_fails(client):
+    response = client.get("/accounts")
+    assert response.status_code == 401
+
+
+def test_access_nonexistent_account_fails(client):
+    headers = auth_headers(client)
+    fake_id = "00000000-0000-0000-0000-000000000000"
+    response = client.post(
+        f"/accounts/{fake_id}/deposit", json={"amount": 100}, headers=headers
+    )
+    assert response.status_code == 404
+
+
+def test_access_other_users_account_forbidden(client):
+    headers_a = auth_headers(client)
+    headers_b = auth_headers(client)
+    account = create_account(client, headers_a, initial_deposit=100)
+
+    response = client.post(
+        f"/accounts/{account['id']}/deposit", json={"amount": 50}, headers=headers_b
+    )
+    assert response.status_code == 403
+
+
+def test_transfer_to_nonexistent_account_fails(client):
+    headers = auth_headers(client)
+    from_account = create_account(client, headers, initial_deposit=500)
+    fake_id = "00000000-0000-0000-0000-000000000000"
+
+    response = client.post(
+        "/accounts/transfer",
+        json={
+            "from_account_id": from_account["id"],
+            "to_account_id": fake_id,
+            "amount": 100,
+        },
+        headers=headers,
+    )
+    assert response.status_code == 404
+
+
+def test_disburse_nonexistent_loan_fails(client):
+    headers = auth_headers(client)
+    fake_id = "00000000-0000-0000-0000-000000000000"
+
+    response = client.post(f"/loans/{fake_id}/disburse", headers=headers)
+    assert response.status_code == 404
+
+
+def test_disburse_already_disbursed_loan_fails(client):
+    headers = auth_headers(client)
+    account = create_account(client, headers, initial_deposit=0)
+
+    loan_response = client.post(
+        "/loans", json={"account_id": account["id"]}, headers=headers
+    )
+    loan = loan_response.json()
+    client.post(f"/loans/{loan['id']}/disburse", headers=headers)
+
+    second_disburse = client.post(f"/loans/{loan['id']}/disburse", headers=headers)
+    assert second_disburse.status_code == 400
+
+
+def test_root_endpoint(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
+def test_transfer_to_same_account_fails(client):
+    headers = auth_headers(client)
+    account = create_account(client, headers, initial_deposit=100)
+
+    response = client.post(
+        "/accounts/transfer",
+        json={
+            "from_account_id": account["id"],
+            "to_account_id": account["id"],
+            "amount": 10,
+        },
+        headers=headers,
+    )
+    assert response.status_code == 400
+
+
+def test_transfer_insufficient_balance_fails(client):
+    headers = auth_headers(client)
+    from_account = create_account(client, headers, initial_deposit=50)
+    to_account = create_account(client, headers, initial_deposit=0)
+
+    response = client.post(
+        "/accounts/transfer",
+        json={
+            "from_account_id": from_account["id"],
+            "to_account_id": to_account["id"],
+            "amount": 500,
+        },
+        headers=headers,
+    )
+    assert response.status_code == 400
+
+
+def test_list_transactions(client):
+    headers = auth_headers(client)
+    account = create_account(client, headers, initial_deposit=200)
+
+    response = client.get(f"/accounts/{account['id']}/transactions", headers=headers)
+    assert response.status_code == 200
+    assert len(response.json()) >= 1
