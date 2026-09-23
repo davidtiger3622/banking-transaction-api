@@ -80,7 +80,13 @@ def deposit(
 ):
     account = get_owned_account(account_id, db, current_user)
     account.balance += deposit_in.amount
-    db.add(Transaction(account_id=account.id, type=TransactionType.DEPOSIT, amount=deposit_in.amount))
+    db.add(
+        Transaction(
+            account_id=account.id,
+            type=TransactionType.DEPOSIT,
+            amount=deposit_in.amount,
+        )
+    )
     db.commit()
     db.refresh(account)
     return account
@@ -100,7 +106,11 @@ def withdraw(
         )
     account.balance -= withdraw_in.amount
     db.add(
-        Transaction(account_id=account.id, type=TransactionType.WITHDRAWAL, amount=withdraw_in.amount)
+        Transaction(
+            account_id=account.id,
+            type=TransactionType.WITHDRAWAL,
+            amount=withdraw_in.amount,
+        )
     )
     db.commit()
     db.refresh(account)

@@ -42,6 +42,7 @@ def test_register_duplicate_email_fails(client):
 
 def test_token_with_no_subject_fails(client):
     from jose import jwt
+
     from app.config import settings
 
     bad_token = jwt.encode({}, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
@@ -53,6 +54,7 @@ def test_token_with_no_subject_fails(client):
 
 def test_token_for_nonexistent_user_fails(client):
     from jose import jwt
+
     from app.config import settings
 
     fake_user_id = "00000000-0000-0000-0000-000000000000"
