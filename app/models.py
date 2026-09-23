@@ -40,7 +40,10 @@ class Account(Base):
 
     owner = relationship("User", back_populates="accounts")
     transactions = relationship(
-        "Transaction", back_populates="account", cascade="all, delete-orphan"
+        "Transaction",
+        back_populates="account",
+        cascade="all, delete-orphan",
+        foreign_keys="Transaction.account_id",
     )
     loans = relationship("Loan", back_populates="account", cascade="all, delete-orphan")
 
