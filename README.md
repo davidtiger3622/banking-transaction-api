@@ -129,3 +129,7 @@ pytest --cov=app --cov-report=term-missing
 ruff check .          # backend
 cd frontend && npm run lint   # frontend
 \`\`\`
+
+## License
+
+MIT — see [LICENSE](LICENSE) for details.
