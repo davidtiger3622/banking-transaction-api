@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@theme {
+  --color-ink: #0E2A2E;
+  --color-panel: #153A3F;
+  --color-brass: #C9A961;
+  --color-parchment: #F4EFE4;
+  --color-sage: #7FA396;
+
+  --font-display: "Fraunces", serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+}
