@@ -2,6 +2,13 @@
 
 A full-stack banking transaction system with a FastAPI backend and a React frontend, supporting account creation, deposits, withdrawals, transfers, dormant account deletion, and loan disbursement.
 
+## Live Demo
+
+- **App**: https://banking-transaction-api-five.vercel.app
+- **API docs**: https://banking-transaction-api-bil3.onrender.com/docs
+
+The backend is hosted on Render's free tier, which spins down after inactivity — the first request after idle time may take 30–50 seconds while it wakes up.
+
 ## Features
 
 - JWT-based user authentication (register/login)
@@ -22,17 +29,21 @@ A full-stack banking transaction system with a FastAPI backend and a React front
 - Pydantic
 - JWT (python-jose) + bcrypt password hashing
 - Ruff for linting, pytest + pytest-cov for testing
+- Deployed on Render
 
 **Frontend**
 - React (Vite)
 - React Router
 - Tailwind CSS
 - ESLint
+- Deployed on Vercel
 
 **CI**
 - GitHub Actions — lint and test both backend and frontend on every push
 
-## Backend Setup
+## Running Locally
+
+### Backend
 
 1. Clone the repository and navigate into it:
    \`\`\`bash
@@ -62,9 +73,9 @@ A full-stack banking transaction system with a FastAPI backend and a React front
    uvicorn app.main:app --reload
    \`\`\`
 
-6. Open the interactive API docs at \`http://127.0.0.1:8000/docs\`
+6. Open the interactive API docs at http://127.0.0.1:8000/docs
 
-## Frontend Setup
+### Frontend
 
 1. Navigate into the frontend folder:
    \`\`\`bash
@@ -86,7 +97,7 @@ A full-stack banking transaction system with a FastAPI backend and a React front
    npm run dev
    \`\`\`
 
-5. Open the printed URL (typically \`http://localhost:5173\`) in your browser. The backend must be running for the frontend to work.
+5. Open the printed URL (typically http://localhost:5173) in your browser. The backend must be running for the frontend to work.
 
 ## API Endpoints
 
@@ -103,6 +114,8 @@ A full-stack banking transaction system with a FastAPI backend and a React front
 | GET | /accounts/{id}/transactions | View transaction history |
 | POST | /loans | Create a loan for an account |
 | POST | /loans/{id}/disburse | Disburse a 10,000 KES loan |
+
+Full interactive documentation is available at \`/docs\` on the live API or your local instance.
 
 ## Running Tests
 
