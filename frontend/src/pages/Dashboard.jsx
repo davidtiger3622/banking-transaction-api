@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { listAccounts, createAccount } from '../api/client'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
 import CreateAccountForm from '../components/CreateAccountForm'
 import AccountCard from '../components/AccountCard'
 
@@ -10,18 +10,21 @@ function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
-  async function refreshAccounts() {
+  const refreshAccounts = useCallback(async () => {
     try {
       const data = await listAccounts(token)
       setAccounts(data)
     } catch (err) {
       setError(err.message)
+    } finally {
+      setIsLoading(false)
     }
-  }
+  }, [token])
 
   useEffect(() => {
-    refreshAccounts().finally(() => setIsLoading(false))
-  }, [])
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data fetch on mount
+    refreshAccounts()
+  }, [refreshAccounts])
 
   async function handleCreateAccount(name, initialDeposit) {
     await createAccount(token, name, initialDeposit)

@@ -1,7 +1,6 @@
-import { createContext, useContext, useState } from 'react'
+import { useState } from 'react'
 import { loginUser, registerUser } from '../api/client'
-
-const AuthContext = createContext(null)
+import { AuthContext } from './authContext'
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'))
@@ -25,10 +24,4 @@ export function AuthProvider({ children }) {
   const value = { token, isAuthenticated: Boolean(token), login, register, logout }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuth must be used within AuthProvider')
-  return context
 }
