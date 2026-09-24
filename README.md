@@ -1,6 +1,6 @@
 # Banking Transaction API
 
-A FastAPI-based banking transaction system supporting account creation, deposits, withdrawals, transfers, dormant account deletion, and loan disbursement.
+A full-stack banking transaction system with a FastAPI backend and a React frontend, supporting account creation, deposits, withdrawals, transfers, dormant account deletion, and loan disbursement.
 
 ## Features
 
@@ -11,16 +11,28 @@ A FastAPI-based banking transaction system supporting account creation, deposits
 - Delete dormant (zero-balance) accounts
 - Create and disburse a 10,000 KES loan to an account
 - Full transaction history per account
+- React frontend with a landing page, auth flow, and dashboard
 
 ## Tech Stack
 
+**Backend**
 - FastAPI
 - PostgreSQL (hosted on Neon)
 - SQLAlchemy
 - Pydantic
 - JWT (python-jose) + bcrypt password hashing
+- Ruff for linting, pytest + pytest-cov for testing
 
-## Setup
+**Frontend**
+- React (Vite)
+- React Router
+- Tailwind CSS
+- ESLint
+
+**CI**
+- GitHub Actions — lint and test both backend and frontend on every push
+
+## Backend Setup
 
 1. Clone the repository and navigate into it:
    \`\`\`bash
@@ -52,6 +64,30 @@ A FastAPI-based banking transaction system supporting account creation, deposits
 
 6. Open the interactive API docs at \`http://127.0.0.1:8000/docs\`
 
+## Frontend Setup
+
+1. Navigate into the frontend folder:
+   \`\`\`bash
+   cd frontend
+   \`\`\`
+
+2. Install dependencies:
+   \`\`\`bash
+   npm install
+   \`\`\`
+
+3. Create a \`.env\` file in \`frontend/\`:
+   \`\`\`
+   VITE_API_BASE_URL=http://127.0.0.1:8000
+   \`\`\`
+
+4. Run the dev server:
+   \`\`\`bash
+   npm run dev
+   \`\`\`
+
+5. Open the printed URL (typically \`http://localhost:5173\`) in your browser. The backend must be running for the frontend to work.
+
 ## API Endpoints
 
 | Method | Endpoint | Description |
@@ -71,5 +107,12 @@ A FastAPI-based banking transaction system supporting account creation, deposits
 ## Running Tests
 
 \`\`\`bash
-pytest
+pytest --cov=app --cov-report=term-missing
+\`\`\`
+
+## Linting
+
+\`\`\`bash
+ruff check .          # backend
+cd frontend && npm run lint   # frontend
 \`\`\`
